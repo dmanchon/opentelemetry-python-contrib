@@ -173,7 +173,7 @@ class _InstrumentedApplication(web.Application):
         super().__init__(*args, **kwargs)
 
 
-class AioHttpInstrumentor(BaseInstrumentor):
+class AioHttpServerInstrumentor(BaseInstrumentor):
     # pylint: disable=protected-access,attribute-defined-outside-init
     """An instrumentor for aiohttp.web.Application
 
