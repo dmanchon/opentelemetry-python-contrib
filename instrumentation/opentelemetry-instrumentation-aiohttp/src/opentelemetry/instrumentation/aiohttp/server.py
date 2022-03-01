@@ -33,9 +33,9 @@ def get_default_span_details(request: web.Request) -> Tuple[str, dict]:
 
 
 def _get_view_func(request) -> str:
-    """TODO: is this only working for guillotina?"""
+    """TODO: is this useful??"""
     try:
-        return str(request.match_info().handler)
+        return request.match_info.handler.__name__
     except AttributeError:
         return "unknown"
 
@@ -134,11 +134,12 @@ getter = AiohttpGetter()
 
 @web.middleware
 async def middleware(request, handler):
+    import pdb; pdb.set_trace()
     """Middleware for aiohttp implementing tracing logic"""
     if (
         context.get_value("suppress_instrumentation")
         or context.get_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY)
-        or not _excluded_urls.url_disabled(request.url)
+        or _excluded_urls.url_disabled(request.url)
     ):
         return await handler(request)
 
