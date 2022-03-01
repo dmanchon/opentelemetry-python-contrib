@@ -1,9 +1,8 @@
 import urllib
 from aiohttp import web
-from guillotina.utils import get_dotted_name
 from multidict import CIMultiDictProxy
 from opentelemetry import context, trace
-from opentelemetry.instrumentation.aiohttp_server.package import _instruments
+from opentelemetry.instrumentation.aiohttp.package import _instruments
 from opentelemetry.instrumentation.instrumentor import BaseInstrumentor
 from opentelemetry.instrumentation.utils import http_status_to_status_code
 from opentelemetry.propagate import extract
@@ -36,7 +35,7 @@ def get_default_span_details(request: web.Request) -> Tuple[str, dict]:
 def _get_view_func(request) -> str:
     """TODO: is this only working for guillotina?"""
     try:
-        return get_dotted_name(request.found_view)
+        return str(request.match_info().handler)
     except AttributeError:
         return "unknown"
 

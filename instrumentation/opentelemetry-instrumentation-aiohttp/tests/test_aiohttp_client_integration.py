@@ -26,8 +26,9 @@ import yarl
 from pkg_resources import iter_entry_points
 
 from opentelemetry import context
-from opentelemetry.instrumentation import aiohttp_client
-from opentelemetry.instrumentation.aiohttp_client import (
+from opentelemetry.instrumentation.aiohttp import client as aiohttp_client
+from opentelemetry.instrumentation.aiohttp import AioHttpInstrumentor
+from opentelemetry.instrumentation.aiohttp.client import (
     AioHttpClientInstrumentor,
 )
 from opentelemetry.instrumentation.utils import _SUPPRESS_INSTRUMENTATION_KEY
@@ -519,8 +520,8 @@ class TestAioHttpClientInstrumentor(TestBase):
 class TestLoadingAioHttpInstrumentor(unittest.TestCase):
     def test_loading_instrumentor(self):
         entry_points = iter_entry_points(
-            "opentelemetry_instrumentor", "aiohttp-client"
+            "opentelemetry_instrumentor", "aiohttp"
         )
 
         instrumentor = next(entry_points).load()()
-        self.assertIsInstance(instrumentor, AioHttpClientInstrumentor)
+        self.assertIsInstance(instrumentor, AioHttpInstrumentor)

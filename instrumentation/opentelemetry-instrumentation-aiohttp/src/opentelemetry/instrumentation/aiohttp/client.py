@@ -90,8 +90,8 @@ import yarl
 
 from opentelemetry import context as context_api
 from opentelemetry import trace
-from opentelemetry.instrumentation.aiohttp_client.package import _instruments
-from opentelemetry.instrumentation.aiohttp_client.version import __version__
+from opentelemetry.instrumentation.aiohttp.package import _instruments
+from opentelemetry.instrumentation.aiohttp.version import __version__
 from opentelemetry.instrumentation.instrumentor import BaseInstrumentor
 from opentelemetry.instrumentation.utils import (
     _SUPPRESS_INSTRUMENTATION_KEY,

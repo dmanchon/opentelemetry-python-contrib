@@ -13,9 +13,9 @@
 # limitations under the License.
 
 
-from opentelemetry.instrumentation.aiohttp_client.package import _instruments
-from opentelemetry.instrumentation.aiohttp_client.client import AioHttpClientInstrumentor
-from opentelemetry.instrumentation.aiohttp_client.server import AioHttpServerInstrumentor
+from opentelemetry.instrumentation.aiohttp.package import _instruments
+from opentelemetry.instrumentation.aiohttp.client import AioHttpClientInstrumentor
+from opentelemetry.instrumentation.aiohttp.server import AioHttpServerInstrumentor
 from opentelemetry.instrumentation.instrumentor import BaseInstrumentor
 
 from typing import Collection
