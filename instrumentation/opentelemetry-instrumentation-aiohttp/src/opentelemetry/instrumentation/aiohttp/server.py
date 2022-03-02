@@ -18,7 +18,7 @@ from typing import Tuple
 _SUPPRESS_HTTP_INSTRUMENTATION_KEY = "suppress_http_instrumentation"
 
 tracer = trace.get_tracer(__name__)
-_excluded_urls = get_excluded_urls("FLASK")
+_excluded_urls = get_excluded_urls("AIOHTTP_SERVER")
 
 
 def get_default_span_details(request: web.Request) -> Tuple[str, dict]:
@@ -134,7 +134,6 @@ getter = AiohttpGetter()
 
 @web.middleware
 async def middleware(request, handler):
-    import pdb; pdb.set_trace()
     """Middleware for aiohttp implementing tracing logic"""
     if (
         context.get_value("suppress_instrumentation")

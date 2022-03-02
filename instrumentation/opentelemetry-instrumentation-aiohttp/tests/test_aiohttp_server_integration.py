@@ -17,6 +17,7 @@ import contextlib
 import typing
 import unittest
 import urllib.parse
+from functools import partial
 from http import HTTPStatus
 from unittest import mock
 
@@ -71,8 +72,8 @@ class TestAioHttpServerIntegration(TestBase):
 
     @staticmethod
     # pylint:disable=unused-argument
-    async def default_handler(request):
-        return aiohttp.web.Response(status=int(200))
+    async def default_handler(request, status=200):
+        return aiohttp.web.Response(status=status)
 
     def assert_spans(self, num_spans: int):
         finished_spans = self.memory_exporter.get_finished_spans()
@@ -102,3 +103,32 @@ class TestAioHttpServerIntegration(TestBase):
             span.attributes[SpanAttributes.HTTP_URL],
         )
         self.assertEqual(200, span.attributes[SpanAttributes.HTTP_STATUS_CODE])
+
+    def test_status_codes(self):
+        error_handler = partial(self.default_handler, status=400)
+        host, port = run_with_test_server(
+            self.get_default_request(), self.URL, error_handler
+        )
+        span = self.assert_spans(1)
+        self.assertEqual("GET", span.attributes[SpanAttributes.HTTP_METHOD])
+        self.assertEqual(
+            f"http://{host}:{port}/test-path",
+            span.attributes[SpanAttributes.HTTP_URL],
+        )
+        self.assertEqual(400, span.attributes[SpanAttributes.HTTP_STATUS_CODE])
+
+    def test_not_recording(self):
+        mock_tracer = mock.Mock()
+        mock_span = mock.Mock()
+        mock_span.is_recording.return_value = False
+        mock_tracer.start_span.return_value = mock_span
+        with mock.patch("opentelemetry.trace.get_tracer"):
+            # pylint: disable=W0612
+            host, port = run_with_test_server(
+                self.get_default_request(), self.URL, self.default_handler
+            )
+
+            self.assertFalse(mock_span.is_recording())
+            self.assertTrue(mock_span.is_recording.called)
+            self.assertFalse(mock_span.set_attribute.called)
+            self.assertFalse(mock_span.set_status.called)
